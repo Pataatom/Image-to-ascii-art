@@ -4,7 +4,6 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 import os
 from PIL import Image, ImageTk
 from tkinter import ttk
-import tqdm
 
 root = TkinterDnD.Tk()
 progress = tk.IntVar()
@@ -121,8 +120,11 @@ def main():
     root.title("Ascii_art")
     root.geometry("250x150")
 
-    img = Image.open(r"more.png")
-    img = ImageTk.PhotoImage(img)
+    try:
+        img = Image.open(r"more.png")
+        img = ImageTk.PhotoImage(img)
+    except:
+        img = None
 
     label = tk.Label(root, text="↓ Drag and drop images here ↓")
     label.pack(padx=10, pady=10)
