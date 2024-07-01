@@ -85,7 +85,7 @@ def working_with_picture(pic, file_name):
         exit()
     image = Image.open(pic)
     (width, height) = image.size
-    new_height = int(height*0.3676470588235294)
+    new_height = int(height*0.3676470588235294)  # cos character has greater height than width
     image = image.resize((width, new_height))
     ascii_art = []
     one_step = 250 / new_height
@@ -137,6 +137,7 @@ def main():
     root.drop_target_register(DND_FILES)
     root.dnd_bind('<<Drop>>', on_drop)
     root.mainloop()
+
 
 if __name__ == '__main__':
     main()
