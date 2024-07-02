@@ -9,7 +9,6 @@ root = TkinterDnD.Tk()
 progress = tk.IntVar()
 progress_bar = ttk.Progressbar(root, length=250, maximum=250, variable=progress)
 
-
 file_name = ""
 ascii_characters_by_surface_10 = " .:-=+*#%@"
 ascii_characters_by_surface_65 = '`^"' + r",:;Il!i~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
@@ -21,6 +20,8 @@ ascii_list.reverse()
 ascii_characters_by_surface = ""
 for char in ascii_list:
     ascii_characters_by_surface += char
+
+
 # stupid reversing string
 
 
@@ -87,10 +88,10 @@ def working_with_picture(pic, file_name):
 
     # ____RESIZING_IMAGE_TO_BE_VIEWABLE____
     (width, height) = image.size
-    aspect_ratio = width/height
+    aspect_ratio = width / height
     width = 1024  # notepad max characters on a line
-    height = width/aspect_ratio
-    new_height = int(height*0.3676470588235294)  # cos character has greater height than width
+    height = width / aspect_ratio
+    new_height = int(height * 0.3676470588235294)  # cos character has greater height than width
     image = image.resize((width, new_height))
     # ____RESIZING_IMAGE_TO_BE_VIEWABLE____
 
@@ -118,10 +119,11 @@ def saving_ascii_art(ascii_art, file_name):
             f.write(line)
             f.write("\n")
 
+
 def on_drop(event):
     file_path = event.data
     file_name = os.path.basename(file_path)
-    file_name = file_name.split(".")[0] # get only the name of the file and not the extension
+    file_name = file_name.split(".")[0]  # get only the name of the file and not the extension
     working_with_picture(str(file_path), file_name)
     # return file_name
 
