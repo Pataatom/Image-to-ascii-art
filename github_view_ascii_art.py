@@ -2,7 +2,7 @@ import time
 import tkinter as tk
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import os
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageOps
 from tkinter import ttk
 
 root = TkinterDnD.Tk()
@@ -84,6 +84,7 @@ def working_with_picture(pic, file_name):
         input()
         exit()
     image = Image.open(pic)
+    image = ImageOps.exif_transpose(image)  # Correct the orientation based on EXIF data
 
     # ____RESIZING_IMAGE_TO_BE_VIEWABLE____
     (width, height) = image.size
