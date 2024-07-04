@@ -87,9 +87,9 @@ def working_with_picture(pic, file_name):
 
     # ____RESIZING_IMAGE_TO_BE_VIEWABLE____
     (width, height) = image.size
-    if width > 1024:
+    if width > 576:
         aspect_ratio = width / height
-        width = 1024  # notepad max characters on a line
+        width = 576  # notepad max characters on a line
         height = int(width/aspect_ratio)
     new_height = int(height*0.3676470588235294)  # cos character has greater height than width
     image = image.resize((width, new_height))
