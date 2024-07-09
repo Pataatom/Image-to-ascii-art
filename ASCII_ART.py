@@ -49,7 +49,7 @@ def pixel_to_ascii(pixel, extension):
             else:
                 index -= 1
         return ascii_characters_by_surface[index]
-    elif extension == ".jpg":
+    elif extension in (".jpg", ".jpeg"):
         if isinstance(pixel, int):  # Handle grayscale images where the pixel is an integer
             pixel_brightness = pixel
             max_brightness = 255
@@ -76,22 +76,19 @@ def pixel_to_ascii(pixel, extension):
 
 
 def working_with_picture(pic, file_name):
-    if ".jpg" in pic:
-        extension = ".jpg"
-    elif ".png" in pic:
-        extension = ".png"
-    else:
+    extension = os.path.splitext(pic)[-1].lower()
+    if extension not in (".png", ".jpeg", ".jpg"):
         print("Bad file extension, need .jpg or .png")
-        input()
+        print(extension)
         exit()
     image = Image.open(pic)
     image = ImageOps.exif_transpose(image)  # Correct the orientation based on EXIF data
 
     # ____RESIZING_IMAGE_TO_BE_VIEWABLE____
     (width, height) = image.size
-    if width > 1024:
+    if width > 1024:  # notepad max characters on a line
         aspect_ratio = width / height
-        width = 1024  # notepad max characters on a line
+        width = 1024
         height = int(width/aspect_ratio)
     new_height = int(height*0.3676470588235294)  # cos character has greater height than width
     image = image.resize((width, new_height))
@@ -122,11 +119,9 @@ def saving_ascii_art(ascii_art, file_name):
             f.write("\n")
 
 def on_drop(event):
-    file_path = event.data
-    file_name = os.path.basename(file_path)
-    file_name = file_name.split(".")[0] # get only the name of the file and not the extension
+    file_path = event.data.strip("{}")
+    file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
     working_with_picture(str(file_path), file_name)
-    # return file_name
 
 
 def main():
