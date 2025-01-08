@@ -5,6 +5,7 @@ import os
 from PIL import Image, ImageTk, ImageOps
 from tkinter import ttk
 
+from clean import settings_visible
 
 root = TkinterDnD.Tk()
 progress = tk.IntVar()
@@ -123,22 +124,53 @@ def on_drop(event):
     file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
     working_with_picture(str(file_path), file_name)
 
+def toggle_settings():
+    global settings_visible
+    settings_frame = tk.Frame(root, bg="lightgray")
+    settings_label = tk.Label(settings_frame, text="Settings Area", font=("Arial", 12), bg="lightgray")
+    settings_label.pack(pady=10)
+
+    if settings_visible:
+        # Hide the settings
+        settings_frame.pack_forget()
+        root.geometry("250x150")  # Adjust the base window size
+    else:
+        # Show the settings
+        settings_frame.pack(fill="both", expand=True)
+        root.geometry("250x300")  # Expand the window size to fit settings
+
+    settings_visible = not settings_visible
+
+
 
 def main():
     root.title("Ascii_art")
     root.geometry("250x150")
 
+    main_frame = tk.Frame(root)
+    main_frame.pack(fill="both", expand=True)
+
     try:
-        img = Image.open(r"more.png")
-        img = ImageTk.PhotoImage(img)
+        img_more = Image.open(r"more.png")
+        img_more = ImageTk.PhotoImage(img_more)
+        img_settings = Image.open(r"settings.png")
+        img_settings = ImageTk.PhotoImage(img_settings)
     except:
-        img = None
+        img_more = None
+        img_settings = None
 
     label = tk.Label(root, text="↓ Drag and drop images here ↓")
     label.pack(padx=10, pady=10)
 
-    img_label = tk.Label(root, image=img)
+    img_label = tk.Label(root, image=img_more)
     img_label.pack(padx=10, pady=10)
+
+    settings_button = tk.Button(main_frame, image=img_settings, command=toggle_settings)
+    settings_button.pack()
+
+
+
+    settings_visible = False
 
     progress_bar.pack()
 
