@@ -5,7 +5,8 @@ import os
 from PIL import Image, ImageTk, ImageOps
 from tkinter import ttk
 
-from clean import settings_visible
+settings_visible = False
+
 
 root = TkinterDnD.Tk()
 progress = tk.IntVar()
