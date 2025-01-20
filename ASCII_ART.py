@@ -1,17 +1,22 @@
 import time
 import tkinter as tk
+
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import os
 from PIL import Image, ImageTk, ImageOps
 from tkinter import ttk
 
-settings_visible = False
-
-
 root = TkinterDnD.Tk()
 progress = tk.IntVar()
 progress_bar = ttk.Progressbar(root, length=250, maximum=250, variable=progress)
 
+# ____ON_DROP____
+image_dropped = False
+settings_frame = tk.Frame(root, bg="lightgray")
+convert_button = tk.Button(settings_frame, text="Convert",
+                               command=lambda: working_with_picture(str(file_path), file_name))
+settings_label = tk.Label(settings_frame, text="Settings Area", font=("Arial", 12), bg="lightgray")
+# ____ON_DROP____
 
 file_name = ""
 ascii_characters_by_surface_10 = " .:-=+*#%@"
@@ -78,6 +83,7 @@ def pixel_to_ascii(pixel, extension):
 
 
 def working_with_picture(pic, file_name):
+    global image_dropped
     extension = os.path.splitext(pic)[-1].lower()
     if extension not in (".png", ".jpeg", ".jpg"):
         print("Bad file extension, need .jpg or .png")
@@ -112,6 +118,8 @@ def working_with_picture(pic, file_name):
     progress.set(0)
     root.update_idletasks()  # Update the GUI after the conversion is done
     saving_ascii_art(ascii_art, file_name)  # Call the saving_ascii_art function to save the ASCII art
+    toggle_settings(False)
+    image_dropped = False
 
 
 def saving_ascii_art(ascii_art, file_name):
@@ -120,45 +128,58 @@ def saving_ascii_art(ascii_art, file_name):
             f.write(line)
             f.write("\n")
 
+
 def on_drop(event):
-    file_path = event.data.strip("{}")
-    file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
-    working_with_picture(str(file_path), file_name)
+    global file_name, image_dropped, file_path
+    if not image_dropped:
+        image_dropped = True
+        file_path = event.data.strip("{}")
+        file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
 
-def toggle_settings():
-    global settings_visible
-    settings_frame = tk.Frame(root, bg="lightgray")
-    settings_label = tk.Label(settings_frame, text="Settings Area", font=("Arial", 12), bg="lightgray")
-    settings_label.pack(pady=10)
 
-    if settings_visible:
+        toggle_settings(True)
+    else:
+        file_path = event.data.strip("{}")
+        file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
+        #working_with_picture(str(file_path), file_name)
+
+
+def toggle_settings(settings_visible = True):
+
+
+    if not settings_visible:
         # Hide the settings
         settings_frame.pack_forget()
+        convert_button.pack_forget()
+        settings_label.pack_forget()
         root.geometry("250x150")  # Adjust the base window size
     else:
         # Show the settings
-        settings_frame.pack(fill="both", expand=True)
+        convert_button.pack(side="top", fill="both", expand=False)
+        settings_frame.pack(fill="both", expand=True)# fill="both", expand=True
+        settings_label.pack(pady=10)
         root.geometry("250x300")  # Expand the window size to fit settings
 
-    settings_visible = not settings_visible
+    #settings_visible = not settings_visible
 
 
 
 def main():
+
     root.title("Ascii_art")
     root.geometry("250x150")
 
-    main_frame = tk.Frame(root)
-    main_frame.pack(fill="both", expand=True)
+    #main_frame = tk.Frame(root)
+    #main_frame.pack(fill="both", expand=True)
 
     try:
         img_more = Image.open(r"more.png")
         img_more = ImageTk.PhotoImage(img_more)
-        img_settings = Image.open(r"settings.png")
-        img_settings = ImageTk.PhotoImage(img_settings)
+        # img_settings = Image.open(r"settings.png")
+        # img_settings = ImageTk.PhotoImage(img_settings)
     except:
         img_more = None
-        img_settings = None
+        # img_settings = None
 
     label = tk.Label(root, text="↓ Drag and drop images here ↓")
     label.pack(padx=10, pady=10)
@@ -166,12 +187,7 @@ def main():
     img_label = tk.Label(root, image=img_more)
     img_label.pack(padx=10, pady=10)
 
-    settings_button = tk.Button(main_frame, image=img_settings, command=toggle_settings)
-    settings_button.pack()
 
-
-
-    settings_visible = False
 
     progress_bar.pack()
 
