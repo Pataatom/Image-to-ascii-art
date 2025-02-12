@@ -12,24 +12,31 @@ progress_bar = ttk.Progressbar(root, length=250, maximum=250, variable=progress)
 
 # ____ON_DROP____
 image_dropped = False
+# ____ON_DROP____
+
+# ____SETTINGS____
 settings_frame = tk.Frame(root, bg="lightgray")
 convert_button = tk.Button(settings_frame, text="Convert",
                                command=lambda: working_with_picture(str(file_path), file_name))
-settings_label = tk.Label(settings_frame, text="Settings Area", font=("Arial", 12), bg="lightgray")
-# ____ON_DROP____
+settings_label = tk.Label(settings_frame, text="settings", font=("Arial", 12), bg="lightgray", wraplength=250)
+# ____SETTINGS____
+
 
 file_name = ""
 ascii_characters_by_surface_10 = " .:-=+*#%@"
 ascii_characters_by_surface_65 = '`^"' + r",:;Il!i~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 ascii_characters_by_surface = ascii_characters_by_surface_10
 
-# stupid reversing string
-ascii_list = list(ascii_characters_by_surface)
-ascii_list.reverse()
-ascii_characters_by_surface = ""
-for char in ascii_list:
-    ascii_characters_by_surface += char
-# stupid reversing string
+
+def color_inverter():  # if true, white viewer background is expected(e.g. windows notepad)
+    global ascii_characters_by_surface, inverted_colors
+    ascii_list = list(ascii_characters_by_surface)
+    ascii_list.reverse()
+    ascii_characters_by_surface = ""
+    for char in ascii_list:
+        ascii_characters_by_surface += char
+
+color_inverter()  # run it once, so the default viewer background is white
 
 
 def pixel_to_ascii(pixel, extension):
@@ -110,6 +117,7 @@ def working_with_picture(pic, file_name):
         root.update_idletasks()  # Update the GUI
         line = ""
         print(another_step)
+        time.sleep(0.001)
         for x in range(width):
             px = image.getpixel((x, y))
             line += pixel_to_ascii(px, extension)
@@ -130,41 +138,49 @@ def saving_ascii_art(ascii_art, file_name):
 
 
 def on_drop(event):
-    global file_name, image_dropped, file_path
+    global file_name, image_dropped, file_path, settings_label
+
+    file_path = event.data.strip("{}")
+    file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
+    shortened_file_name = ""
+    for char in file_name:
+        if len(shortened_file_name) <= 40:
+            shortened_file_name += char
+    settings_label.config(text=shortened_file_name)
+
     if not image_dropped:
         image_dropped = True
-        file_path = event.data.strip("{}")
-        file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
+        toggle_settings()
 
-
-        toggle_settings(True)
-    else:
-        file_path = event.data.strip("{}")
-        file_name = os.path.basename(file_path).split(".")[0]  # get only the name of the file and not the extension
-        #working_with_picture(str(file_path), file_name)
+    root.update_idletasks()
 
 
 def toggle_settings(settings_visible = True):
-
+    global settings_label, inverted_color_checkbox
 
     if not settings_visible:
         # Hide the settings
         settings_frame.pack_forget()
         convert_button.pack_forget()
         settings_label.pack_forget()
+        inverted_color_checkbox.pack_forget()
         root.geometry("250x150")  # Adjust the base window size
     else:
         # Show the settings
         convert_button.pack(side="top", fill="both", expand=False)
         settings_frame.pack(fill="both", expand=True)# fill="both", expand=True
         settings_label.pack(pady=10)
+        inverted_color_checkbox.pack()
         root.geometry("250x300")  # Expand the window size to fit settings
+    root.update_idletasks()  # Update the GUI after the conversion is done
+
 
     #settings_visible = not settings_visible
 
 
 
 def main():
+    global inverted_color_checkbox
 
     root.title("Ascii_art")
     root.geometry("250x150")
@@ -175,8 +191,6 @@ def main():
     try:
         img_more = Image.open(r"more.png")
         img_more = ImageTk.PhotoImage(img_more)
-        # img_settings = Image.open(r"settings.png")
-        # img_settings = ImageTk.PhotoImage(img_settings)
     except:
         img_more = None
         # img_settings = None
@@ -187,12 +201,12 @@ def main():
     img_label = tk.Label(root, image=img_more)
     img_label.pack(padx=10, pady=10)
 
-
-
     progress_bar.pack()
 
     root.drop_target_register(DND_FILES)
     root.dnd_bind('<<Drop>>', on_drop)
+
+    inverted_color_checkbox = tk.Checkbutton(settings_frame, text='Inverted colors', command=color_inverter)
     root.mainloop()
 
 
