@@ -14,16 +14,17 @@ progress_bar = ttk.Progressbar(root, length=250, maximum=250, variable=progress)
 image_dropped = False
 # ____ON_DROP____
 
+
 def convert():
     global file_name, file_path, max_width
     max_width = max_ascii_width.get() or 1000
     max_width = int(max_width)
     working_with_picture(str(file_path), file_name)
 
+
 # ____SETTINGS____
 settings_frame = tk.Frame(root, bg="lightgray")
-convert_button = tk.Button(settings_frame, text="Convert",
-                               command=convert)
+convert_button = tk.Button(settings_frame, text="Convert", command=convert)
 settings_label = tk.Label(settings_frame, text="settings", font=("Arial", 12), bg="lightgray", wraplength=250)
 max_ascii_width = tk.StringVar(value="1000")   # max 1000 char on a line if using win11, 1024 if using win10 notepad
 max_width_label = tk.Label(root, text="Max width:")
@@ -35,6 +36,7 @@ ascii_characters_by_surface_10 = " .:-=+*#%@"
 ascii_characters_by_surface_65 = '`^"' + r",:;Il!i~+_-?][}{1)(|\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 ascii_characters_by_surface = ascii_characters_by_surface_10
 
+
 def color_inverter():  # if true, white viewer background is expected(e.g. windows notepad)
     global ascii_characters_by_surface, inverted_colors
     ascii_list = list(ascii_characters_by_surface)
@@ -43,7 +45,9 @@ def color_inverter():  # if true, white viewer background is expected(e.g. windo
     for char in ascii_list:
         ascii_characters_by_surface += char
 
+
 color_inverter()  # run it once, so the default viewer background is white
+
 
 def pixel_to_ascii(pixel, extension):
     if extension == ".png":
@@ -94,6 +98,7 @@ def pixel_to_ascii(pixel, extension):
         print("I don't support this extension, sry")
         time.sleep(1)
 
+
 def working_with_picture(pic, pic_name):
     global image_dropped, max_width
     extension = os.path.splitext(pic)[-1].lower()
@@ -118,11 +123,11 @@ def working_with_picture(pic, pic_name):
     one_step = 250 / new_height
     another_step = one_step
     for y in range(new_height):
-        progress.set(another_step)
+        progress.set(int(another_step))
         root.update_idletasks()  # Update the GUI
         line = ""
-        #print(another_step)
-        #time.sleep(0.001)
+        # print(another_step)
+        # time.sleep(0.001)
         for x in range(width):
             px = image.getpixel((x, y))
             line += pixel_to_ascii(px, extension)
@@ -134,11 +139,13 @@ def working_with_picture(pic, pic_name):
     toggle_settings(False)
     image_dropped = False
 
+
 def saving_ascii_art(ascii_art, pic_name):
     with open(f"{pic_name}_ascii_image.txt", "w") as f:
         for line in ascii_art:
             f.write(line)
             f.write("\n")
+
 
 def on_drop(event):
     global file_name, image_dropped, file_path, settings_label
@@ -157,7 +164,8 @@ def on_drop(event):
 
     root.update_idletasks()
 
-def toggle_settings(settings_visible = True):
+
+def toggle_settings(settings_visible=True):
     global settings_label, inverted_color_checkbox, width_entry
 
     if not settings_visible:
@@ -172,7 +180,7 @@ def toggle_settings(settings_visible = True):
     else:
         # Show the settings
         convert_button.pack(side="top", fill="both", expand=False)
-        settings_frame.pack(fill="both", expand=True)# fill="both", expand=True
+        settings_frame.pack(fill="both", expand=True)  # fill="both", expand=True
         settings_label.pack(pady=10)
         inverted_color_checkbox.pack()
         max_width_label.pack()
@@ -180,8 +188,8 @@ def toggle_settings(settings_visible = True):
         root.geometry("250x304")  # Expand the window size to fit settings
     root.update_idletasks()  # Update the GUI after the conversion is done
 
+    # settings_visible = not settings_visible
 
-    #settings_visible = not settings_visible
 
 def main():
     global inverted_color_checkbox, width_entry
@@ -189,15 +197,14 @@ def main():
     root.title("Ascii_art")
     root.geometry("250x150")
 
-    #main_frame = tk.Frame(root)
-    #main_frame.pack(fill="both", expand=True)
-
     try:
-        img_more = Image.open(r"more.png")
+        img_more = Image.open(r"add.png")
         img_more = ImageTk.PhotoImage(img_more)
+        icon = Image.open("circle-of-two-clockwise-arrows-rotation.png")
+        icon = ImageTk.PhotoImage(icon)
+        root.iconphoto(False, icon)
     except:
         img_more = None
-        # img_settings = None
 
     label = tk.Label(root, text="↓ Drag and drop images here ↓")
     label.pack(padx=10, pady=10)
