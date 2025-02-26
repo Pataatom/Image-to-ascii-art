@@ -1,10 +1,10 @@
 import time
 import tkinter as tk
-
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import os
 from PIL import Image, ImageTk, ImageOps
 from tkinter import ttk
+import sys
 
 root = TkinterDnD.Tk()
 progress = tk.IntVar()
@@ -20,6 +20,14 @@ def convert():
     max_width = max_ascii_width.get() or 1000
     max_width = int(max_width)
     working_with_picture(str(file_path), file_name)
+
+
+if getattr(sys, 'frozen', False):
+    # Running as an executable
+    base_path = sys._MEIPASS
+else:
+    # Running as a script
+    base_path = os.path.dirname(os.path.abspath(__file__))
 
 
 # ____SETTINGS____
@@ -198,9 +206,9 @@ def main():
     root.geometry("250x150")
 
     try:
-        img_more = Image.open(r"add.png")
+        img_more = Image.open(os.path.join(base_path, "add.png"))
         img_more = ImageTk.PhotoImage(img_more)
-        icon = Image.open("circle-of-two-clockwise-arrows-rotation.png")
+        icon = Image.open(os.path.join(base_path, "circle-of-two-clockwise-arrows-rotation.png"))
         icon = ImageTk.PhotoImage(icon)
         root.iconphoto(False, icon)
     except:
